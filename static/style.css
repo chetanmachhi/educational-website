@@ -1,0 +1,55 @@
+/* styles.css */
+
+body {
+    font-family: Arial, sans-serif;
+}
+
+.mcq-container {
+    width: 50%;
+    margin: 50px auto;
+    border: 1px solid #ccc;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.question {
+    margin-bottom: 20px;
+}
+
+/* Hide radio buttons */
+.option {
+    display: none;
+}
+
+/* Style for labels acting as options */
+label {
+    display: block;
+    padding: 15px;
+    border: 2px solid #2196F3;
+    border-radius: 5px;
+    margin: 10px 0;
+    cursor: pointer;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+/* Hover effect */
+label:hover {
+    background-color: #f0f0f0;
+}
+
+/* Style for the correct answer */
+#option3:checked + label {
+    background-color: green;
+    color: white;
+    border-color: darkgreen;
+}
+
+/* Style for the wrong answer */
+#option1:checked + label,
+#option2:checked + label,
+#option4:checked + label {
+    background-color: red;
+    color: white;
+    border-color: darkred;
+}

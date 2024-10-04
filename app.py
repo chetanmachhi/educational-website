@@ -14,14 +14,18 @@ def main():
 @app.route("/gujarati", methods=["GET"])
 def gujarati():
     return render_template("gujarati.html")
-    
-@app.route("/english", methods=["GET"])
-def english():
-    return render_template("english.html")
 
-@app.route("/maths", methods=["GET"])
-def maths():
-    return render_template("maths.html") 
+@app.route("/alankar", methods=["GET"])
+def alankar():
+    return render_template("alankar.html")
+    
+@app.route("/learn-alankar", methods=["GET"])
+def learn_alankar():
+    return render_template("learn-alankar.html")
+
+@app.route("/practice-alankar", methods=["GET"])
+def practice_alankar():
+    return render_template("practice-alankar.html") 
 
 
 
