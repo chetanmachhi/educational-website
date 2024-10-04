@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Questions</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='que_styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Add Questions</h1>
+        <form action="/add-questions" method="POST">
+            <div id="questions-container">
+                <!-- Repeat this block for each question (up to 10) -->
+                {% for i in range(10) %}
+                <div class="question-block">
+                    <h3>Question {{ i + 1 }}</h3>
+                    <div class="form-group">
+                        <label for="subject_{{ i }}">Subject:</label>
+                        <select id="subject_{{ i }}" name="subject_{{ i }}" required>
+                            <option value="Gujarati" selected>Gujarati</option>
+                            <option value="English">English</option>
+                            <option value="Maths">Maths</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="topic_{{ i }}">Topic:</label>
+                        <select id="topic_{{ i }}" name="topic_{{ i }}" required>
+                            <option value="Alankar" selected>Alankar</option>
+                            <!-- Add other topics here if needed -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="question_{{ i }}">Question:</label>
+                        <textarea id="question_{{ i }}" name="question_{{ i }}" required></textarea>
+                    </div>
+                    <!-- Input fields for options -->
+                    <div class="form-group">
+                        <label for="option_a_{{ i }}">Option A:</label>
+                        <input type="text" id="option_a_{{ i }}" name="option_a_{{ i }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="option_b_{{ i }}">Option B:</label>
+                        <input type="text" id="option_b_{{ i }}" name="option_b_{{ i }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="option_c_{{ i }}">Option C:</label>
+                        <input type="text" id="option_c_{{ i }}" name="option_c_{{ i }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="correct_answer_{{ i }}">Correct Answer:</label>
+                        <input type="text" id="correct_answer_{{ i }}" name="correct_answer_{{ i }}" required>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <button type="submit">Add Questions</button>
+        </form>
+    </div>
+</body>
+</html>
