@@ -1,55 +1,31 @@
-/* styles.css */
-
 body {
-    font-family: Arial, sans-serif;
+    background-color: #f0f0f0; /* Light gray background */
 }
 
-.mcq-container {
-    width: 50%;
-    margin: 50px auto;
-    border: 1px solid #ccc;
-    padding: 20px;
-    border-radius: 8px;
-    text-align: center;
+.quiz-container {
+    background-color: #ffffff; /* White background for quiz container */
+    padding: 20px; /* Add some padding */
+    border-radius: 5px; /* Rounded corners */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow */
 }
 
 .question {
-    margin-bottom: 20px;
+    display: flex;            /* Use flexbox for layout */
+    flex-direction: column;   /* Stack items vertically */
+    gap: 10px;               /* Space between buttons */
 }
 
-/* Hide radio buttons */
-.option {
-    display: none;
+button {
+    width: 100%;             /* Make buttons take full width */
+    background-color: #007BFF; /* Blue background */
+    color: white;            /* White text color */
+    border: none;            /* Remove border */
+    padding: 10px;           /* Padding for buttons */
+    border-radius: 5px;      /* Rounded corners */
+    cursor: pointer;         /* Pointer cursor on hover */
+    transition: background-color 0.3s; /* Smooth transition */
 }
 
-/* Style for labels acting as options */
-label {
-    display: block;
-    padding: 15px;
-    border: 2px solid #2196F3;
-    border-radius: 5px;
-    margin: 10px 0;
-    cursor: pointer;
-    transition: background-color 0.3s, border-color 0.3s;
-}
-
-/* Hover effect */
-label:hover {
-    background-color: #f0f0f0;
-}
-
-/* Style for the correct answer */
-#option3:checked + label {
-    background-color: green;
-    color: white;
-    border-color: darkgreen;
-}
-
-/* Style for the wrong answer */
-#option1:checked + label,
-#option2:checked + label,
-#option4:checked + label {
-    background-color: red;
-    color: white;
-    border-color: darkred;
+button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
 }
