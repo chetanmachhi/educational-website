@@ -1,6 +1,14 @@
-from flask import Flask, flash, jsonify, redirect, render_template, request
+from flask import Flask, flash, jsonify, redirect, render_template, request, url_for
+import sqlite3
+from datetime import datetime
 
 app = Flask(__name__)
+
+# Database connection function
+def get_db_connection():
+    conn = sqlite3.connect('data.db')  # Connect to your SQLite database
+    conn.row_factory = sqlite3.Row  # Allows for accessing columns by name
+    return conn
 
 # Your existing routes
 @app.route("/", methods=["GET"])
@@ -11,22 +19,26 @@ def main():
 def gujarati():
     return render_template("gujarati.html")
 
-@app.route("/alankar", methods=["GET"])
-def alankar():
-    return render_template("alankar.html")
+@app.route("/samas", methods=["GET"])
+def samas():
+    return render_template("samas.html")
 
-@app.route("/learn-alankar", methods=["GET"])
-def learn_alankar():
-    return render_template("learn-alankar.html")
+@app.route("/dvand-samas", methods=["GET"])
+def dvand_samas():
+    return render_template("dvand-samas.html")
 
-@app.route("/practice-alankar", methods=["GET"])
-def practice_alankar():
-    return render_template("practice-alankar.html")
+@app.route("/learn-dvand-samas", methods=["GET"])
+def learn_dvand_samas():
+    return render_template("learn-dvand-samas.html")
+
+@app.route("/practice-dvand-samas", methods=["GET"])
+def practice_dvand_samas():
+    return render_template("practice-dvand-samas.html")
 
 # New quiz route
 @app.route("/quiz", methods=["GET"])
 def quiz():
-    return render_template("quiz.html", questions=questions)
+    return render_template("quiz.html")  # Ensure you have a 'quiz.html' file
 
 # Check answer route (POST)
 @app.route("/check-answer", methods=["POST"])
@@ -35,8 +47,8 @@ def check_answer():
     question_id = data['question_id']
     selected_answer = data['answer']
 
-    # Get the correct answer from the hardcoded questions
-    correct_answer = questions[question_id]['answer']
+    # Assume you have some hardcoded questions for the quiz
+    correct_answer = "some_correct_answer"  # Update this with your logic
     result = {
         "correct": selected_answer == correct_answer,
         "correct_answer": correct_answer
@@ -46,70 +58,55 @@ def check_answer():
 
 @app.route('/add_question', methods=['GET', 'POST'])
 def add_question():
+    # Connect to the database and retrieve subjects, topics, and subtopics first
+    conn = sqlite3.connect('test.db')
+    cursor = conn.cursor()
+    
+    # Retrieve subjects
+    cursor.execute("SELECT * FROM subjects")
+    subjects = cursor.fetchall()
+
+    # Retrieve topics
+    cursor.execute("SELECT id, topic_name FROM topics GROUP BY id")
+    topics = cursor.fetchall()
+
+    # Retrieve subtopics
+    cursor.execute("SELECT id, MAX(subtopic_name) AS subtopic_name FROM subtopics GROUP BY id")
+    subtopics = cursor.fetchall()
+
+    conn.close()
+    
+    # Handle POST request for adding a question
     if request.method == 'POST':
-        try:
-            # Get data from form (with basic validation)
-            topic_id = request.form['topic_id']
-            question = request.form['question']
-            correct_answer = request.form['correct_answer']
+        # Now you get the subject ID, topic ID, and subtopic ID directly from the form
+        subject_id = request.form['subject']
+        topic_id = request.form['topic']
+        subtopic_id = request.form['subtopic']
+        question = request.form['question']
+        answer = request.form['correct_answer']
+        option1 = request.form['option_a']
+        option2 = request.form['option_b']
+        option3 = request.form['option_c']
+        hints = request.form.get('hint')  
+        explanation = request.form.get('solution')  
 
-            # Ensure required fields are filled
-            if not topic_id or not question or not correct_answer:
-                return "Topic, Question, and Correct Answer are required!", 400
+        # Insert the question into the database
+        conn = sqlite3.connect('test.db')
+        cursor = conn.cursor()
+        
+        cursor.execute('''
+            INSERT INTO questions (subject_id, topic_id, subtopic_id, question, answer, option1, option2, option3, hints, explanation)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (subject_id, topic_id, subtopic_id, question, answer, option1, option2, option3, hints, explanation))
+        
+        conn.commit()
+        conn.close()
 
-            hint = request.form.get('hint')  # Optional
-            explanation = request.form.get('explanation')  # Optional
-            difficulty = request.form.get('difficulty')  # Optional
+        return redirect(url_for('add_question'))  # Redirect to the same route after adding the question
 
-            options = [
-                request.form['option_1'],
-                request.form['option_2'],
-                request.form['option_3'],
-                request.form['option_4']
-            ]
+    # For GET request, render the form with subjects, topics, and subtopics
+    return render_template('que.html', subjects=subjects, topics=topics, subtopics=subtopics)
 
-            # Ensure there are 4 options
-            if len(options) != 4 or any(option == '' for option in options):
-                return "All 4 options are required!", 400
-
-            # Database insertion
-            conn = get_db_connection()
-            cursor = conn.cursor()
-
-            cursor.execute("""
-                INSERT INTO questions (topic_id, question, correct_answer, hint, explanation, difficulty, date_time, modified)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            """, (topic_id, question, correct_answer, hint, explanation, difficulty, datetime.now(), datetime.now()))
-
-            question_id = cursor.lastrowid
-
-            # Insert options into the options table
-            for option in options:
-                cursor.execute("""
-                    INSERT INTO options (question_id, option_text)
-                    VALUES (?, ?)
-                """, (question_id, option))
-
-            conn.commit()
-
-        except sqlite3.DatabaseError as e:
-            # Catch and log database errors
-            print(f"Database error occurred: {e}")
-            return "An error occurred while interacting with the database.", 500
-
-        except Exception as e:
-            # Catch any other exceptions
-            print(f"An unexpected error occurred: {e}")
-            return "An unexpected error occurred.", 500
-
-        finally:
-            if conn:
-                conn.close()
-
-        return redirect(url_for('add_question'))  # Redirect after successful submission
-
-    # If GET request, render the form for adding a question
-    return render_template('que.html')
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=5000)
