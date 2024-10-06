@@ -93,7 +93,6 @@ def quiz():
 
     return render_template("quiz.html", questions=questions, current_page=page, total_questions=total_questions)
 
-# Endpoint to get paginated questions
 # Check answer route (POST)
 @app.route("/check-answer", methods=["POST"])
 def check_answer():
@@ -118,6 +117,69 @@ def check_answer():
     }
 
     return jsonify(result)
+
+@app.route("/<subject>/<topic>/<subtopic>/quiz", methods=["GET"])
+@app.route("/<subject>/<topic>/quiz", methods=["GET"])
+@app.route("/<subject>/quiz", methods=["GET"])
+@app.route("/quiz", methods=["GET"])
+def get_quiz(subject=None, topic=None, subtopic=None):
+    page = int(request.args.get('page', 1))
+    limit = 5
+    offset = (page - 1) * limit
+
+    conn = get_db_connection()
+    print('subject:',subject,'topic:', topic,'subtopic:', subtopic)
+    if subject is None:
+        # Scenario 4: No subject, topic, or subtopic (show all questions)
+        questions = conn.execute('''
+            SELECT id, question, option1, option2, option3, answer 
+            FROM questions 
+            LIMIT ? OFFSET ?
+        ''', (limit, offset)).fetchall()
+        
+        total_questions = conn.execute('SELECT COUNT(*) FROM questions').fetchone()[0]
+
+    elif topic is None:
+        # Scenario 1: Only subject (show all questions for the subject)
+        questions = conn.execute('''
+            SELECT id, question, option1, option2, option3, answer 
+            FROM questions 
+            WHERE subject_id = (SELECT id FROM subjects WHERE subject_name = ?)
+            LIMIT ? OFFSET ?
+        ''', (subject, limit, offset)).fetchall()
+        
+        total_questions = conn.execute('SELECT COUNT(*) FROM questions WHERE subject_id = (SELECT id FROM subjects WHERE subject_name = ?) ', (subject,)).fetchone()[0]
+
+    elif subtopic is None:
+        # Scenario 2: Subject and topic (show questions for the topic)
+        questions = conn.execute('''
+            SELECT id, question, option1, option2, option3, answer 
+            FROM questions 
+            WHERE subject_id = (SELECT id FROM subjects WHERE LOWER(subject_name) = ?)
+            AND topic_id = (SELECT id FROM topics WHERE LOWER(topic_name) = ?)
+            LIMIT ? OFFSET ?
+        ''', (subject, topic, limit, offset)).fetchall()
+        
+        total_questions = conn.execute('SELECT COUNT(*) FROM questions WHERE subject_id = (SELECT id FROM subjects WHERE LOWER(subject_name) = ?) AND topic_id = (SELECT id FROM topics WHERE LOWER(topic_name) = ?)', (subject, topic)).fetchone()[0]
+
+    else:
+        # Scenario 3: Subject, topic, and subtopic (show questions for the subtopic)
+        questions = conn.execute('''
+            SELECT id, question, option1, option2, option3, answer 
+            FROM questions 
+            WHERE subject_id = (SELECT id FROM subjects WHERE subject_name = ?)
+            AND topic_id = (SELECT id FROM topics WHERE topic_name = ?)
+            AND subtopic_id = (SELECT id FROM subtopics WHERE subtopic_name = ?)
+            LIMIT ? OFFSET ?
+        ''', (subject, topic, subtopic, limit, offset)).fetchall()
+
+        total_questions = conn.execute('SELECT COUNT(*) FROM questions WHERE subject_id = (SELECT id FROM subjects WHERE subject_name = ?) AND topic_id = (SELECT id FROM topics WHERE topic_name = ?) AND subtopic_id = (SELECT id FROM subtopics WHERE subtopic_name = ?)', (subject, topic, subtopic)).fetchone()[0]
+
+    conn.close()
+    print('questions:', questions, 'current_page:', page, 'total_questions:', total_questions)
+
+    return render_template("quiz.html", questions=questions, current_page=page, total_questions=total_questions)
+
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=5000)
