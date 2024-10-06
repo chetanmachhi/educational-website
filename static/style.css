@@ -1,21 +1,24 @@
 body {
     background-color: #f0f0f0;
 }
+
 .quiz-container {
     background-color: #ffffff;
     padding: 20px;
     border-radius: 5px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
+
 .question {
     display: flex;
     flex-direction: column;
     gap: 10px;
     margin-bottom: 20px;
 }
+
 button {
     width: 100%;
-    background-color: #007BFF;
+    background-color: #007BFF; /* Default button color */
     color: white;
     border: none;
     border-radius: 5px;
@@ -25,6 +28,7 @@ button {
     font-weight: normal; /* Normal font weight */
     border: 2px solid transparent; /* Transparent border */
 }
+
 button:hover {
     background-color: rgba(0, 173, 255, 0.8); /* Light blue on hover */
     transform: scale(1.05); /* Slightly scale up on hover */
@@ -32,9 +36,11 @@ button:hover {
     border: 2px solid white; /* White border on hover */
     color: black; /* Change text color to black on hover */
 }
+
 .correct {
     background-color: green !important; /* Ensure correct answer stays green */
 }
+
 .incorrect {
     background-color: red !important; /* Ensure incorrect answer stays red */
 }
@@ -45,19 +51,21 @@ button:hover {
     margin-top: 20px;
 }
 
-.page-button {
+.pagination button { /* Changed from .page-button to button */
     padding: 10px;
     margin: 0 5px;
-    background-color: #007BFF;
-    color: white;
-    text-decoration: none;
-    border-radius: 5px;
+    background-color: #007BFF; /* Default color for pagination buttons */
+    color: white; /* Text color for pagination buttons */
+    border-radius: 5px; /* Rounded corners for buttons */
+    border: none; /* Remove border */
 }
 
-.page-button.current {
-    background-color: black;
+/* Adjusted current button's hover state to not apply hover styles */
+.pagination button.current {
+    background-color: #6610f2; /* Set background color for the current page button */
 }
 
-.page-button:hover {
-    background-color: #0056b3;
+/* Adjust hover styles for non-current buttons */
+.pagination button:hover:not(.current) { /* Only apply hover styles if not current */
+    background-color: #0056b3; /* Darker blue on hover for pagination buttons */
 }

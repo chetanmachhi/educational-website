@@ -88,32 +88,12 @@ def quiz():
 
     conn = get_db_connection()
     questions = conn.execute('SELECT id, question, option1, option2, option3, answer FROM questions LIMIT ? OFFSET ?', (limit, offset)).fetchall()
-    conn.close()
-
-    print("questions:",questions)
-    print("page:", page)
-    return render_template("quiz.html", questions=questions, current_page=page)
-
-# Endpoint to get paginated questions
-@app.route('/get-questions', methods=['GET'])
-def get_questions():
-    page = int(request.args.get('page', 1))  # Get current page from request
-    limit = 5  # Same limit as quiz route
-    offset = (page - 1) * limit
-
-    conn = get_db_connection()
-    # Fetch the questions for the current page, using limit and offset
-    questions = conn.execute('SELECT id, question, option1, option2, option3, answer FROM questions LIMIT ? OFFSET ?', (limit, offset)).fetchall()
-    
-    # Fetch the total number of questions
     total_questions = conn.execute('SELECT COUNT(*) FROM questions').fetchone()[0]
     conn.close()
 
-    return jsonify({
-        'total_questions': total_questions,
-        'questions': [dict(q) for q in questions]
-    })
+    return render_template("quiz.html", questions=questions, current_page=page, total_questions=total_questions)
 
+# Endpoint to get paginated questions
 # Check answer route (POST)
 @app.route("/check-answer", methods=["POST"])
 def check_answer():
