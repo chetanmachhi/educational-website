@@ -11,9 +11,18 @@ body {
 
 .question {
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
     gap: 10px;
     margin-bottom: 20px;
+}
+
+.question-text {
+    flex-basis: 100%; /* Ensures the question text takes up the full row */
+    margin-bottom: 10px; /* Adds space between the question and the options */
+}
+
+.question button {
+    flex: 1 1 calc(50% - 10px); /* Two buttons per row, adjusts based on screen size */
 }
 
 button {
@@ -47,8 +56,26 @@ button:hover {
 
 .pagination {
     display: flex;
-    justify-content: center;
+    flex-direction: column; /* Stack nav buttons below page buttons */
+    align-items: center; /* Center align items */
     margin-top: 20px;
+}
+
+#page-numbers {
+    display: flex; /* Align page number buttons in a row */
+    gap: 5px; /* Space between buttons */
+}
+
+.nav-buttons {
+    display: flex; /* Align next/previous buttons horizontally */
+    justify-content: space-between; /* Space between the buttons */
+    width: 100%; /* Ensure it spans the full width of the pagination container */
+    margin-top: 10px; /* Space between page buttons and navigation buttons */
+}
+
+.nav-buttons button {
+    flex: 1; /* Equal space for each button */
+    margin: 0 10px; /* Margin for spacing between buttons */
 }
 
 .pagination button { /* Changed from .page-button to button */

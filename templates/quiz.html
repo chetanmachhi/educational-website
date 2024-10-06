@@ -12,7 +12,7 @@
         <div id="questions">
             {% for question in questions %}
                 <div class="question">
-                    <strong>Q. {{ loop.index + (current_page - 1) * 5 }}: {{ question.question }}</strong>
+                    <strong class="question-text">Q. {{ loop.index + (current_page - 1) * 5 }}: {{ question.question }}</strong>
                     <button onclick="submitAnswer({{ question.id }}, '{{ question.option1 }}', this)">{{ question.option1 }}</button>
                     <button onclick="submitAnswer({{ question.id }}, '{{ question.option2 }}', this)">{{ question.option2 }}</button>
                     <button onclick="submitAnswer({{ question.id }}, '{{ question.option3 }}', this)">{{ question.option3 }}</button>
@@ -23,16 +23,17 @@
 
         <!-- Pagination controls -->
         <div id="pagination" class="pagination">
-            <button onclick="location.href='/quiz?page={{ current_page - 1 }}'" {% if current_page <= 1 %}disabled{% endif %}>Previous</button>
             <span id="page-numbers">
                 {% for page in range(1, (total_questions // 5) + 2) %}
                     <button onclick="location.href='/quiz?page={{ page }}'" {% if page == current_page %}class="current"{% endif %}>{{ page }}</button>
                 {% endfor %}
             </span>
-            <button onclick="location.href='/quiz?page={{ current_page + 1 }}'" {% if current_page >= (total_questions // 5) + 1 %}disabled{% endif %}>Next</button>
+            <div class="nav-buttons">
+                <button onclick="location.href='/quiz?page={{ current_page - 1 }}'" {% if current_page <= 1 %}disabled{% endif %}>Previous</button>
+                <button onclick="location.href='/quiz?page={{ current_page + 1 }}'" {% if current_page >= (total_questions // 5) + 1 %}disabled{% endif %}>Next</button>
+            </div>
         </div>
-    </div>
-
+        
     <script>
         function submitAnswer(questionId, selectedAnswer, button) {
             // Logic for submitting answer remains unchanged
