@@ -17,44 +17,11 @@ def main():
 
 @app.route("/gujarati", methods=["GET"])
 def gujarati():
-    return render_template("gujarati.html")
+    return render_template("gujarati/index_gujarati.html")
 
-@app.route("/samas", methods=["GET"])
+@app.route("/gujarati/samas", methods=["GET"])
 def samas():
-    return render_template("samas.html")
-
-@app.route("/dvand-samas", methods=["GET"])
-def dvand_samas():
-    return render_template("dvand-samas.html")
-
-@app.route("/learn-dvand-samas", methods=["GET"])
-def learn_dvand_samas():
-    return render_template("learn-dvand-samas.html")
-
-@app.route("/practice-dvand-samas", methods=["GET"])
-def practice_dvand_samas():
-    return render_template("practice-dvand-samas.html")
-
-# New quiz route
-@app.route("/quiz", methods=["GET"])
-def quiz():
-    return render_template("quiz.html")  # Ensure you have a 'quiz.html' file
-
-# Check answer route (POST)
-@app.route("/check-answer", methods=["POST"])
-def check_answer():
-    data = request.get_json()
-    question_id = data['question_id']
-    selected_answer = data['answer']
-
-    # Assume you have some hardcoded questions for the quiz
-    correct_answer = "some_correct_answer"  # Update this with your logic
-    result = {
-        "correct": selected_answer == correct_answer,
-        "correct_answer": correct_answer
-    }
-
-    return jsonify(result)
+    return render_template("gujarati/samas/samas_index.html")
 
 @app.route('/add_question', methods=['GET', 'POST'])
 def add_question():
@@ -107,6 +74,70 @@ def add_question():
     # For GET request, render the form with subjects, topics, and subtopics
     return render_template('que.html', subjects=subjects, topics=topics, subtopics=subtopics)
 
+# Function to connect to the SQLite database
+def get_db_connection():
+    conn = sqlite3.connect('test2.db')
+    conn.row_factory = sqlite3.Row
+    return conn
+
+@app.route("/quiz", methods=["GET"])
+def quiz():
+    page = int(request.args.get('page', 1))
+    limit = 5
+    offset = (page - 1) * limit
+
+    conn = get_db_connection()
+    questions = conn.execute('SELECT id, question, option1, option2, option3, answer FROM questions LIMIT ? OFFSET ?', (limit, offset)).fetchall()
+    conn.close()
+
+    print("questions:",questions)
+    print("page:", page)
+    return render_template("quiz.html", questions=questions, current_page=page)
+
+# Endpoint to get paginated questions
+@app.route('/get-questions', methods=['GET'])
+def get_questions():
+    page = int(request.args.get('page', 1))  # Get current page from request
+    limit = 5  # Same limit as quiz route
+    offset = (page - 1) * limit
+
+    conn = get_db_connection()
+    # Fetch the questions for the current page, using limit and offset
+    questions = conn.execute('SELECT id, question, option1, option2, option3, answer FROM questions LIMIT ? OFFSET ?', (limit, offset)).fetchall()
+    
+    # Fetch the total number of questions
+    total_questions = conn.execute('SELECT COUNT(*) FROM questions').fetchone()[0]
+    conn.close()
+
+    return jsonify({
+        'total_questions': total_questions,
+        'questions': [dict(q) for q in questions]
+    })
+
+# Check answer route (POST)
+@app.route("/check-answer", methods=["POST"])
+def check_answer():
+    data = request.get_json()
+    question_id = data.get('question_id')
+    selected_answer = data.get('answer')
+
+    if not question_id or not selected_answer:
+        return jsonify({"error": "Invalid request"}), 400
+
+    conn = get_db_connection()
+    question = conn.execute('SELECT answer FROM questions WHERE id = ?', (question_id,)).fetchone()
+    conn.close()
+
+    if question is None:
+        return jsonify({"error": "Question not found"}), 404
+
+    correct_answer = question['answer']
+    result = {
+        "correct": selected_answer == correct_answer,
+        "correct_answer": correct_answer
+    }
+
+    return jsonify(result)
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=5000)

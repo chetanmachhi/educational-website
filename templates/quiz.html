@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCQ Interactive Quiz</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <div class="quiz-container">
+        <div id="questions"></div>
+
+        <!-- Pagination controls -->
+        <div id="pagination" class="pagination">
+            <button id="prev">Previous</button>
+            <span id="page-numbers"></span>
+            <button id="next">Next</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [];
+        let currentQuestionIndex = 0;
+        const questionsPerPage = 5;
+        let totalQuestions = 0;
+        let totalPages = 0;
+        let currentPage = 1;
+
+        async function fetchQuestions() {
+            const response = await fetch(`/get-questions?page=${currentPage}`);
+            const data = await response.json();
+            totalQuestions = data.total_questions;
+            questions.length = 0; // Reset the array
+            questions.push(...data.questions);
+            totalPages = Math.ceil(totalQuestions / questionsPerPage);
+            displayQuestions();
+            updatePagination();
+        }
+
+        function displayQuestions() {
+            const questionsContainer = document.getElementById('questions');
+            questionsContainer.innerHTML = '';
+            const questionsToShow = questions.slice(currentQuestionIndex, currentQuestionIndex + questionsPerPage);
+
+            questionsToShow.forEach((question, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question';
+                questionDiv.innerHTML = `<strong>Q. ${currentQuestionIndex + index + 1}: ${question.question}</strong>`;
+                
+                const options = [question.option1, question.option2, question.option3, question.answer];
+                options.forEach(option => {
+                    const button = document.createElement('button');
+                    button.textContent = option;
+                    button.onclick = () => submitAnswer(question.id, option, button);
+                    questionDiv.appendChild(button);
+                });
+
+                questionsContainer.appendChild(questionDiv);
+            });
+        }
+
+        async function submitAnswer(questionId, selectedAnswer, button) {
+            const response = await fetch('/check-answer', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ question_id: questionId, answer: selectedAnswer }),
+            });
+            const result = await response.json();
+
+            const feedbackDiv = document.createElement('div');
+            feedbackDiv.className = 'feedback';
+
+            if (result.correct) {
+                feedbackDiv.textContent = 'Correct!';
+                button.classList.add('correct');
+            } else {
+                feedbackDiv.textContent = 'Wrong answer! The correct answer was: ' + result.correct_answer;
+                button.classList.add('incorrect');
+            }
+
+            const buttons = button.parentElement.querySelectorAll('button');
+            buttons.forEach(btn => {
+                btn.disabled = true;
+                if (btn.textContent === result.correct_answer) {
+                    btn.classList.add('correct');
+                } else if (btn.textContent === selectedAnswer) {
+                    btn.classList.add('incorrect');
+                }
+            });
+
+            button.parentElement.appendChild(feedbackDiv);
+        }
+
+        function updatePagination() {
+            const pageNumbers = document.getElementById('page-numbers');
+            pageNumbers.innerHTML = '';
+
+            for (let i = currentPage; i < Math.min(currentPage + 5, totalPages + 1); i++) {
+                const pageButton = document.createElement('button');
+                pageButton.textContent = i;
+                pageButton.classList.add('page-button');
+                if (i === currentPage) {
+                    pageButton.classList.add('current');
+                }
+                pageButton.onclick = () => {
+                    currentPage = i;
+                    currentQuestionIndex = (i - 1) * questionsPerPage;
+                    fetchQuestions();
+                };
+                pageNumbers.appendChild(pageButton);
+            }
+        }
+
+        document.getElementById('prev').onclick = () => {
+            if (currentPage > 1) {
+                currentPage--;
+                currentQuestionIndex -= questionsPerPage;
+                fetchQuestions();
+            }
+        };
+
+        document.getElementById('next').onclick = () => {
+            if (currentPage < totalPages) {
+                currentPage++;
+                currentQuestionIndex += questionsPerPage;
+                fetchQuestions();
+            }
+        };
+
+        fetchQuestions(); // Initial fetch
+    </script>
+
+</body>
+</html>
