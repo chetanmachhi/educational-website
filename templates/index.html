@@ -1,34 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MCQs Hell</title>
-</head>
-<body>
-    <header>
-        <h1>MCQs Hell</h1>
-    </header>
+{% extends "base.html" %}
 
-    <nav>
-        <ul>
-            <li><a href="/gujarati">Gujarati</a></li>
-            <li><a href="/english">English</a></li>
-            <li><a href="/maths">Maths</a></li>
-            <li><a href="/add_question">Add Questions</a></li>
-            <li><a href="/quiz">Start the Quiz</a></li>
-        </ul>
-    </nav>
-
-    <main>
-        <section>
-            <h2>Welcome to MCQs Hell!</h2>
-            <p>Select a subject above to get started with practice questions or to add your own questions.</p>
-        </section>
-    </main>
-
-    <footer>
-        <p>&copy; 2024 MCQs Hell. All rights reserved.</p>
-    </footer>
-</body>
-</html>
+{% block content %}
+<nav>
+    <ul>
+        {% for subject in subjects %}
+            <li><a href="{{ url_for('subject_page', subject=subject) }}">{{ subject }}</a></li>
+        {% endfor %}
+    </ul>
+</nav>
+{% endblock %}

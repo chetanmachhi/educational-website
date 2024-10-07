@@ -11,17 +11,17 @@ def get_db_connection():
     return conn
 
 # Your existing routes
-@app.route("/", methods=["GET"])
-def main():
-    return render_template("index.html")
+#@app.route("//", methods=["GET"])
+#def main():
+#    return render_template("index.html")
 
-@app.route("/gujarati", methods=["GET"])
-def gujarati():
-    return render_template("gujarati/index_gujarati.html")
+#@app.route("/gujarati", methods=["GET"])
+#def gujarati():
+ #   return render_template("gujarati/index_gujarati.html")
 
-@app.route("/gujarati/samas", methods=["GET"])
-def samas():
-    return render_template("gujarati/samas/samas_index.html")
+#@app.route("/gujarati/samas", methods=["GET"])
+#def samas():
+#    return render_template("gujarati/samas/samas_index.html")
 
 @app.route('/add_question', methods=['GET', 'POST'])
 def add_question():
@@ -179,6 +179,71 @@ def get_quiz(subject=None, topic=None, subtopic=None):
     print('questions:', questions, 'current_page:', page, 'total_questions:', total_questions)
 
     return render_template("quiz.html", questions=questions, current_page=page, total_questions=total_questions)
+
+
+#if __name__ == "__main__":
+ #   app.run(debug=True, host="0.0.0.0", port=5000)
+
+
+
+
+
+
+
+
+
+
+
+@app.route('/')
+def index():
+
+    subjects = ["Gujarati", "English", "Maths"]
+    return render_template('index.html', header_title="MCQs Hell", subjects=subjects)
+
+
+@app.route('/<subject>')
+def subject_page(subject):
+
+    topics = {
+        "gujarati": ["Samas", "Alankar", "Chhand"],
+        "english": ["Grammar", "Literature", "Comprehension"],
+        "maths": ["Algebra", "Geometry", "Calculus"]
+                }
+    
+    topic_list = topics.get(subject.lower(), [])
+    return render_template('subject.html', 
+                           title=f"{subject.capitalize()} Topics", 
+                           header_title=f"{subject.capitalize()} MCQs", 
+                           topics=topic_list, 
+                           subject=subject.lower())
+
+# Route for a topic page
+@app.route('/<subject>/<topic>')
+def topic_page(subject, topic):
+    subtopics = {
+        "samas": ["Subtopic1", "Subtopic2"],
+        "alankar": ["Subtopic3", "Subtopic4"],
+        "chhand": ["Subtopic5", "Subtopic6"]
+    }
+    
+    # Check if the topic has subtopics
+    subtopic_list = subtopics.get(topic.lower(), [])
+    
+    if subtopic_list:
+        return render_template('topic.html', 
+                               title=f"{topic.capitalize()} - {subject.capitalize()}", 
+                               header_title=f"{topic.capitalize()} Subtopics", 
+                               subtopics=subtopic_list,
+                               subject=subject.lower(), 
+                               topic=topic)
+    else:
+        learning_material = f"Learning material for {topic} in {subject}."
+        return render_template('learning.html', 
+                               title=f"{topic.capitalize()} - {subject.capitalize()}", 
+                               header_title=f"Learning {topic.capitalize()}", 
+                               content=learning_material, 
+                               subject=subject.lower(), 
+                               topic=topic)
 
 
 if __name__ == "__main__":

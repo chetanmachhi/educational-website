@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<nav>
+    <ul>
+        {% for subtopic in subtopics %}
+            <li>{{ subtopic }}</li>
+        {% endfor %}
+    </ul>
+</nav>
+{% endblock %}

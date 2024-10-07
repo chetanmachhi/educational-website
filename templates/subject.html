@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+<nav>
+    <ul>
+        {% for topic in topics %}
+            <li><a href="{{ url_for('topic_page', subject=subject, topic=topic | lower) }}">{{ topic }}</a></li>
+        {% endfor %}
+    </ul>
+</nav>
+{% endblock %}
