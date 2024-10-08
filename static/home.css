@@ -1,0 +1,92 @@
+/* General body styling */
+body {
+    background-color: #f0f0f0;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Full height of the viewport */
+}
+
+/* Centering the topics/subtopics and making them responsive */
+nav {
+    display: flex; /* Enable flex for nav */
+    justify-content: center; /* Center align the nav */
+    margin: 20px 0; /* Add margin for breathing room */
+}
+
+nav ul {
+    display: flex;
+    flex-direction: column; /* Align buttons vertically */
+    align-items: center; /* Center the buttons */
+    gap: 20px; /* Space between the buttons */
+    padding: 0; /* Remove default list padding */
+}
+
+/* Navigation list item */
+nav li {
+    list-style-type: none; /* Remove bullet points */
+    width: 100%; /* Take full width */
+}
+
+/* Navigation links */
+nav a {
+    display: block;
+    padding: 15px 20px;
+    font-size: 1.2rem; /* Readable font size */
+    background-color: #007BFF; /* Button color */
+    color: white;
+    text-align: center;
+    text-decoration: none; /* Remove underline from links */
+    border: 2px solid #007BFF; /* Add a border */
+    border-radius: 10px; /* Rounded corners for buttons */
+    transition: background-color 0.3s, transform 0.2s; /* Smooth transition for hover effects */
+    width: 80%; /* Make buttons a bit narrower */
+    margin: 0 auto; /* Center the button */
+}
+
+/* Hover effect for the buttons */
+nav a:hover {
+    background-color: rgba(0, 173, 255, 0.8); /* Slightly lighter blue on hover */
+    transform: scale(1.05); /* Scale the button slightly on hover */
+    border: 2px solid white; /* White border on hover */
+}
+
+/* Responsive adjustments for topic/subtopic buttons */
+@media (max-width: 500px) {
+    nav a {
+        width: 90%; /* Make buttons wider on small screens */
+    }
+}
+
+/* Header styling */
+header {
+    background-color: #007BFF; /* Header background color */
+    color: white; /* Text color */
+    padding: 10px; /* Increased padding for more space */
+    text-align: center; /* Center the text */
+    font-size: 2rem; /* Larger font size for better readability */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Shadow effect for depth */
+    border-bottom: 3px solid #FFD700; /* Gold bottom border for distinction */
+    margin-bottom: 10px; /* Space between header and content */
+    border-radius: 5px; /* Slight rounding of corners */
+}
+
+/* Footer styling */
+footer {
+    text-align: center;
+    padding: 10px;
+    background-color: #007BFF;
+    color: white;
+    margin-top: auto; /* Ensure footer stays at the bottom of the page, but not fixed */
+}
+
+/* Keep the main content centered vertically */
+main {
+    flex-grow: 1; /* Make main content take up available space */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}

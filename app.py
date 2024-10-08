@@ -3,25 +3,55 @@ import sqlite3
 from datetime import datetime
 
 app = Flask(__name__)
+    
+@app.route('/')
+def index():
+    subjects = ["Gujarati", "English", "Maths"]
+    return render_template('index.html', header_title="MCQs Hell", subjects=subjects)
 
-# Database connection function
-def get_db_connection():
-    conn = sqlite3.connect('data.db')  # Connect to your SQLite database
-    conn.row_factory = sqlite3.Row  # Allows for accessing columns by name
-    return conn
+@app.route('/<subject>')
+def subject_page(subject):
 
-# Your existing routes
-#@app.route("//", methods=["GET"])
-#def main():
-#    return render_template("index.html")
+    topics = {
+        "gujarati": ["Samas", "Alankar", "Chhand"],
+        "english": ["Grammar", "Literature", "Comprehension"],
+        "maths": ["Algebra", "Geometry", "Calculus"]
+                }
+    
+    topic_list = topics.get(subject.lower(), [])
+    return render_template('subject.html', 
+                           title=f"{subject.capitalize()} Topics", 
+                           header_title=f"{subject.capitalize()} MCQs", 
+                           topics=topic_list, 
+                           subject=subject.lower())
 
-#@app.route("/gujarati", methods=["GET"])
-#def gujarati():
- #   return render_template("gujarati/index_gujarati.html")
-
-#@app.route("/gujarati/samas", methods=["GET"])
-#def samas():
-#    return render_template("gujarati/samas/samas_index.html")
+# Route for a topic page
+@app.route('/<subject>/<topic>')
+def topic_page(subject, topic):
+    subtopics = {
+        "samas": ["Subtopic1", "Subtopic2"],
+        "alankar": ["Subtopic3", "Subtopic4"],
+        "chhand": ["Subtopic5", "Subtopic6"]
+    }
+    
+    # Check if the topic has subtopics
+    subtopic_list = subtopics.get(topic.lower(), [])
+    
+    if subtopic_list:
+        return render_template('topic.html', 
+                               title=f"{topic.capitalize()} - {subject.capitalize()}", 
+                               header_title=f"{topic.capitalize()} Subtopics", 
+                               subtopics=subtopic_list,
+                               subject=subject.lower(), 
+                               topic=topic)
+    else:
+        learning_material = f"Learning material for {topic} in {subject}."
+        return render_template('learning.html', 
+                               title=f"{topic.capitalize()} - {subject.capitalize()}", 
+                               header_title=f"Learning {topic.capitalize()}", 
+                               content=learning_material, 
+                               subject=subject.lower(), 
+                               topic=topic)
 
 @app.route('/add_question', methods=['GET', 'POST'])
 def add_question():
@@ -128,9 +158,8 @@ def get_quiz(subject=None, topic=None, subtopic=None):
     offset = (page - 1) * limit
 
     conn = get_db_connection()
-    print('subject:',subject,'topic:', topic,'subtopic:', subtopic)
+    
     if subject is None:
-        # Scenario 4: No subject, topic, or subtopic (show all questions)
         questions = conn.execute('''
             SELECT id, question, option1, option2, option3, answer 
             FROM questions 
@@ -140,7 +169,6 @@ def get_quiz(subject=None, topic=None, subtopic=None):
         total_questions = conn.execute('SELECT COUNT(*) FROM questions').fetchone()[0]
 
     elif topic is None:
-        # Scenario 1: Only subject (show all questions for the subject)
         questions = conn.execute('''
             SELECT id, question, option1, option2, option3, answer 
             FROM questions 
@@ -151,7 +179,6 @@ def get_quiz(subject=None, topic=None, subtopic=None):
         total_questions = conn.execute('SELECT COUNT(*) FROM questions WHERE subject_id = (SELECT id FROM subjects WHERE subject_name = ?) ', (subject,)).fetchone()[0]
 
     elif subtopic is None:
-        # Scenario 2: Subject and topic (show questions for the topic)
         questions = conn.execute('''
             SELECT id, question, option1, option2, option3, answer 
             FROM questions 
@@ -163,7 +190,6 @@ def get_quiz(subject=None, topic=None, subtopic=None):
         total_questions = conn.execute('SELECT COUNT(*) FROM questions WHERE subject_id = (SELECT id FROM subjects WHERE LOWER(subject_name) = ?) AND topic_id = (SELECT id FROM topics WHERE LOWER(topic_name) = ?)', (subject, topic)).fetchone()[0]
 
     else:
-        # Scenario 3: Subject, topic, and subtopic (show questions for the subtopic)
         questions = conn.execute('''
             SELECT id, question, option1, option2, option3, answer 
             FROM questions 
@@ -176,75 +202,19 @@ def get_quiz(subject=None, topic=None, subtopic=None):
         total_questions = conn.execute('SELECT COUNT(*) FROM questions WHERE subject_id = (SELECT id FROM subjects WHERE subject_name = ?) AND topic_id = (SELECT id FROM topics WHERE topic_name = ?) AND subtopic_id = (SELECT id FROM subtopics WHERE subtopic_name = ?)', (subject, topic, subtopic)).fetchone()[0]
 
     conn.close()
-    print('questions:', questions, 'current_page:', page, 'total_questions:', total_questions)
 
-    return render_template("quiz.html", questions=questions, current_page=page, total_questions=total_questions)
+    total_pages = (total_questions + limit - 1) // limit
 
+    if page > total_pages and total_pages > 0:
+        page = total_pages
+        offset = (page - 1) * limit
+        questions = conn.execute('''
+            SELECT id, question, option1, option2, option3, answer 
+            FROM questions 
+            LIMIT ? OFFSET ?
+        ''', (limit, offset)).fetchall()
 
-#if __name__ == "__main__":
- #   app.run(debug=True, host="0.0.0.0", port=5000)
-
-
-
-
-
-
-
-
-
-
-
-@app.route('/')
-def index():
-
-    subjects = ["Gujarati", "English", "Maths"]
-    return render_template('index.html', header_title="MCQs Hell", subjects=subjects)
-
-
-@app.route('/<subject>')
-def subject_page(subject):
-
-    topics = {
-        "gujarati": ["Samas", "Alankar", "Chhand"],
-        "english": ["Grammar", "Literature", "Comprehension"],
-        "maths": ["Algebra", "Geometry", "Calculus"]
-                }
-    
-    topic_list = topics.get(subject.lower(), [])
-    return render_template('subject.html', 
-                           title=f"{subject.capitalize()} Topics", 
-                           header_title=f"{subject.capitalize()} MCQs", 
-                           topics=topic_list, 
-                           subject=subject.lower())
-
-# Route for a topic page
-@app.route('/<subject>/<topic>')
-def topic_page(subject, topic):
-    subtopics = {
-        "samas": ["Subtopic1", "Subtopic2"],
-        "alankar": ["Subtopic3", "Subtopic4"],
-        "chhand": ["Subtopic5", "Subtopic6"]
-    }
-    
-    # Check if the topic has subtopics
-    subtopic_list = subtopics.get(topic.lower(), [])
-    
-    if subtopic_list:
-        return render_template('topic.html', 
-                               title=f"{topic.capitalize()} - {subject.capitalize()}", 
-                               header_title=f"{topic.capitalize()} Subtopics", 
-                               subtopics=subtopic_list,
-                               subject=subject.lower(), 
-                               topic=topic)
-    else:
-        learning_material = f"Learning material for {topic} in {subject}."
-        return render_template('learning.html', 
-                               title=f"{topic.capitalize()} - {subject.capitalize()}", 
-                               header_title=f"Learning {topic.capitalize()}", 
-                               content=learning_material, 
-                               subject=subject.lower(), 
-                               topic=topic)
-
+    return render_template("quiz.html", questions=questions, current_page=page, total_questions=total_questions, total_pages=total_pages)
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=5000)

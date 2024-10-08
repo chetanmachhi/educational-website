@@ -96,3 +96,4 @@ button:hover {
 .pagination button:hover:not(.current) { /* Only apply hover styles if not current */
     background-color: #0056b3; /* Darker blue on hover for pagination buttons */
 }
+
