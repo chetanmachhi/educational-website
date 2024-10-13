@@ -1,0 +1,120 @@
+GNU AFFERO GENERAL PUBLIC LICENSE
+Version 3, 19 November 2007
+
+Copyright (C) 2007 Free Software Foundation, Inc. 
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA 
+Everyone is permitted to copy and distribute verbatim copies
+of this license document, but changing it is not allowed.
+
+                            Preamble
+
+The GNU Affero General Public License is a free software license
+that ensures that everyone has the freedom to run, study, share,
+and modify the software. In particular, it gives users the
+freedom to obtain and run the source code of the software and
+to share modified versions of it under certain conditions.
+
+This license is intended to ensure that all versions of the
+program remain free software for all its users, including
+those who use the software over a network. This is achieved
+by requiring that any modifications to the software be made
+available to the public when the software is used as a service
+over a network.
+
+The full license is as follows:
+
+                             TERMS AND CONDITIONS
+
+0. Definitions.
+
+  "This License" refers to version 3 of the GNU Affero General Public License.
+
+  "Copyright" also means copyright-like laws that apply to other kinds of
+  works, such as semiconductor masks.
+
+  "The Program" refers to any copyrightable work licensed under this License.
+  Each licensee is addressed as "you". "Your" is defined as "you" and "your"
+  as well as referring to all your agents and subsidiaries.
+
+  "Source Code" means the preferred form of the work for making modifications
+  to it. "Object Code" means any non-source form of a work.
+
+  "You" refers to the individual or legal entity exercising this License.
+
+  "Network Server" means a server that makes the Program available for users
+  to interact with it over a network, such as the Internet.
+
+  "User" means any person that uses, interacts with, or otherwise benefits
+  from the Program, either directly or indirectly.
+
+1. Source Code.
+
+  The source code for a work means the preferred form of the work for making
+  modifications to it. The source code must be made available through the
+  distribution of the Program.
+
+2. Basic Permissions.
+
+  You are free to use the Program, to distribute copies of the Program,
+  and to modify the Program under the conditions of this License.
+
+3. Copyleft.
+
+  You must keep intact all notices stating that this License applies to the
+  Program and all other notices that are required by the License.
+
+4. Conveying Modified Source Versions.
+
+  You may convey modified versions of the Program under the terms of this
+  License.
+
+5. Conveying Non-Source Forms.
+
+  You may convey non-source forms of the Program, provided that you do not
+  create or maintain a separate license for them.
+
+6. Client and Server Interaction.
+
+  You must provide the source code for the version of the Program that you
+  distribute and/or modify when the Program is used over a network.
+
+7. No Warranty.
+
+  The Program is provided "as is" without warranty of any kind.
+
+8. Limitation of Liability.
+
+  In no event will any contributor to the Program be liable for any damages
+  arising from the use of the Program.
+
+9. Accepting the License.
+
+  By using, modifying, or distributing the Program, you accept this License.
+
+10. Compliance.
+
+  If you cannot comply with this License, you cannot use the Program.
+
+11. Termination.
+
+  You may terminate this License at any time by destroying all copies of the
+  Program.
+
+12. Future Versions.
+
+  The Free Software Foundation may publish new versions of the AGPL.
+
+13. Disclaimer of Warranty.
+
+  There is no warranty for the Program, and it is provided "as is".
+
+14. Interpretation.
+
+  If you need a legal interpretation of this License, consult a legal
+  professional.
+
+15. Version.
+
+  This License is version 3 of the GNU Affero General Public License.
+
+END OF TERMS AND CONDITIONS
