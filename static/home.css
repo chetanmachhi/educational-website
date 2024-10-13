@@ -27,7 +27,7 @@ nav ul {
 /* Navigation list item */
 nav li {
     list-style-type: none; /* Remove bullet points */
-    width: 100%; /* Take full width */
+    width: 250px; /* Take full width */
 }
 
 /* Navigation links */
@@ -42,7 +42,7 @@ nav a {
     border: 2px solid #007BFF; /* Add a border */
     border-radius: 10px; /* Rounded corners for buttons */
     transition: background-color 0.3s, transform 0.2s; /* Smooth transition for hover effects */
-    width: 80%; /* Make buttons a bit narrower */
+    width: 100%; /* Make buttons a bit narrower */
     margin: 0 auto; /* Center the button */
 }
 
@@ -89,4 +89,36 @@ main {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+}
+/* Keyframes for animations */
+@keyframes slideFromLeft {
+    from { margin-left: 100%; }
+    to { margin-left: 0%; }
+}
+
+@keyframes slideFromRight {
+    from { margin-right: 100%; }
+    to { margin-right: 0%; }
+}
+
+/* Apply animations based on even and odd children */
+nav li:nth-child(even) {
+    animation-name: slideFromLeft;
+    animation-duration: 2s; /* Adjust duration as needed */
+    animation-timing-function: ease;
+    animation-iteration-count: 1;
+}
+
+nav li:nth-child(odd) {
+    animation-name: slideFromRight;
+    animation-duration: 2s; /* Adjust duration as needed */
+    animation-timing-function: ease;
+    animation-iteration-count: 1;
+}
+
+/* General animation properties */
+.animation {
+    animation-duration: 2s; /* Duration of the animation */
+    animation-timing-function: ease; /* Easing function */
+    animation-iteration-count: 1; /* Play the animation once */
 }

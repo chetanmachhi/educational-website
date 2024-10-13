@@ -14,6 +14,7 @@ body {
     flex-wrap: wrap;
     gap: 10px;
     margin-bottom: 20px;
+    justify-content: center;
 }
 
 .question-text {
@@ -22,7 +23,9 @@ body {
 }
 
 .question button {
-    flex: 1 1 calc(50% - 10px); /* Two buttons per row, adjusts based on screen size */
+    flex: 0 0 calc(50% - 10px); /* Two buttons per row, accounting for the gap */
+    max-width: calc(50% - 10px); /* Prevent buttons from exceeding 50% */
+    box-sizing: border-box; /* Include padding and border in width */
 }
 
 button {
