@@ -1,6 +1,5 @@
 from flask import Flask, flash, jsonify, redirect, render_template, request, url_for
 import sqlite3
-from datetime import datetime
 import random
 
 app = Flask(__name__)
@@ -57,7 +56,7 @@ def topic_page(subject, topic):
 @app.route('/add_question', methods=['GET', 'POST'])
 def add_question():
     # Connect to the database and retrieve subjects, topics, and subtopics first
-    conn = sqlite3.connect('test.db')
+    conn = sqlite3.connect('test2.db')
     cursor = conn.cursor()
     
     # Retrieve subjects
@@ -79,7 +78,7 @@ def add_question():
         # Now you get the subject ID, topic ID, and subtopic ID directly from the form
         subject_id = request.form['subject']
         topic_id = request.form['topic']
-        subtopic_id = request.form['subtopic']
+        #subtopic_id = request.form['subtopic']
         question = request.form['question']
         answer = request.form['correct_answer']
         option1 = request.form['option_a']
@@ -89,13 +88,13 @@ def add_question():
         explanation = request.form.get('solution')  
 
         # Insert the question into the database
-        conn = sqlite3.connect('test.db')
+        conn = sqlite3.connect('test2.db')
         cursor = conn.cursor()
         
         cursor.execute('''
-            INSERT INTO questions (subject_id, topic_id, subtopic_id, question, answer, option1, option2, option3, hints, explanation)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        ''', (subject_id, topic_id, subtopic_id, question, answer, option1, option2, option3, hints, explanation))
+            INSERT INTO questions (subject_id, topic_id, question, answer, option1, option2, option3, hints, explanation)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (subject_id, topic_id, question, answer, option1, option2, option3, hints, explanation))
         
         conn.commit()
         conn.close()
